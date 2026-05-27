@@ -1,0 +1,24 @@
+{
+    "folders": [
+        {
+            "path": ".",
+            "name": "envelope"
+        },
+        {
+            "path": "transmitter",
+            "name": "transmitter"
+        },
+        {
+            "path": "receiver",
+            "name": "receiver"
+        },
+        {
+            "path": "shared",
+            "name": "shared"
+        },
+        {
+            "path": "hub",
+            "name": "hub"
+        }
+    ]
+}
