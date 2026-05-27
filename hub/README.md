@@ -39,9 +39,9 @@ You should see something like this:
 
 ```
 Message with ID: 1
-Client mosq_sub1 received PUBLISH (d0, q0, r0, m0, 'my/test', ... (18 bytes))
+Client mosq_sub1 received PUBLISH (d0, q0, r0, m0, 'Test', ... (18 bytes))
 Message with ID: 2
-Client mosq_sub1 received PUBLISH (d0, q0, r0, m0, 'my/test', ... (18 bytes))
+Client mosq_sub1 received PUBLISH (d0, q0, r0, m0, 'Test', ... (18 bytes))
 Message with ID: 3
-Client mosq_sub1 received PUBLISH (d0, q0, r0, m0, 'my/test', ... (18 bytes))
+Client mosq_sub1 received PUBLISH (d0, q0, r0, m0, 'Test', ... (18 bytes))
 ```
