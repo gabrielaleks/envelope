@@ -1,0 +1,4 @@
+# Mosquitto
+passwd
+*/mosquitto/data/*
+*/mosquitto/log/*

@@ -43,6 +43,16 @@ For a flap that rests closed and briefly opens:
 - Traefik will be used to route to envelope.kaoshome.dev.
 - It is possible to integrate with Home Assistant. I have to point HA's MQTT integration at my Mosquitto broker and define a sensor. Once that's done I can manage state history, use Lovelace history cards to give me a timeline view and implement push notifications and automations. I can look into this after implementing my custom service.
 
+Structure:
+
+```
+envelope/
+├── hub/            # Mosquitto + app + UI
+├── receiver/       # PlatformIO
+├── shared/         # common packet definitions
+└── transmitter/    # PlatformIO
+```
+
 ## steps
 1. Start ESP32 project (should I have one repository storing the transmitter and receiver code or one repository for each?)
 2. Validate components:
