@@ -9,18 +9,14 @@
 #define RADIO_CS_PIN 7
 #define RADIO_DIO0_PIN 9
 #define RADIO_DIO1_PIN 33
-// #define RADIO_DIO2_PIN 34
-// #define RADIO_DIO3_PIN 21
-// #define RADIO_DIO4_PIN 10
-// #define RADIO_DIO5_PIN 36
 #define RADIO_RST_PIN 8
 #define RADIO_MOSI_PIN 6
 #define RADIO_MISO_PIN 3
 #define RADIO_SCLK_PIN 5
-#define OLED_SDA 18
-#define OLED_SCL 17
 
 // OLED parameters
+#define OLED_SDA 18
+#define OLED_SCL 17
 #define OLED_WIDTH 128
 #define OLED_HEIGHT 64
 #define OLED_ADDR 0x3C

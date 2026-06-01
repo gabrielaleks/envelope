@@ -56,9 +56,8 @@ envelope/
 ## steps
 1. Start ESP32 project (should I have one repository storing the transmitter and receiver code or one repository for each?)
 2. Validate components:
-   1. Make ESPs talk to each other
-   2. Validate infrared reflective sensor
-   3. Validate N/O reed switch
-   4. Validate N/C reed switch
-   5. Validate photoresistor
+   - Make ESPs talk to each other ✓
+   - Validate infrared reflective sensor
+   - Validate N/C reed switch
+   - Validate photoresistor ✓
 3. ...
