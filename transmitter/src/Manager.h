@@ -4,6 +4,7 @@
 #include <sensors/ReedSwitch.h>
 #include <sensors/Ultrasonic.h>
 
+#include "Display.h"
 #include "LoRaRadio.h"
 #include "packet.h"
 
@@ -14,6 +15,7 @@ public:
 
 private:
     LoRaRadio _lora;
+    Display _display;
     Photoresistor _photoresistor;
     ReedSwitch _flapSwitch;
     ReedSwitch _boxSwitch;

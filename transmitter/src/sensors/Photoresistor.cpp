@@ -11,7 +11,7 @@ int Photoresistor::init() {
     int val = analogRead(_pin);
     if (val < 20) {
         Serial.println("Photoresistor not detected");
-        return 1;
+        return -1;
     }
 
     Serial.println("Photoresistor initialized! \n");
