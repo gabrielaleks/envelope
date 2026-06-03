@@ -21,7 +21,7 @@ The objective of this project, called "envelope", is to build a smart detection 
 - 1x HC-SR04 ultrasonic sensor
 - soldering equipment: soldering iron, soldering wire, copper welding desoldering wire, iron tip refresher, pcb boards, tip cleaners
 
-## solution design
+## project design
 ### multi-sensor fusion
 I can make the three sensors complement each other:
   - Reed switch on the flap: will detect when something is pushed through the slot. Detects the mechanical event directly, regardless of lighting conditions.
@@ -57,7 +57,7 @@ Notes:
 - `true` from a N/C reed switch is reliable. It means the magnet was physically there and then left (flap opened).
 - row `true | true | false` could rely on duration instead of brightness. Box opened sustains high light for more seconds.
 
-### architecture
+### structure
 - P2P LoRa: the LilyGo boards talk directly to each other with no infrastructure in between.
 - ESP32 receiver -> homelab with MQTT: the receiver will publish to a topic, like envelope/event, and the homelab side subscribes to it. If the app restarts, messages can be buffered. The ESP32 doesn't need to know or care what's on the other end.
 - SQLite x Redis: redis is a cache first db, persistence is opt-in. SQLite is the appropriate tool here since it is a single file with append-only inserts and can handle thousands of rows trivially without the need of an extra container.
@@ -75,6 +75,32 @@ envelope/
 └── transmitter/    # PlatformIO
 ```
 
+#### code architecture
+- Shared struct with no methods for the transmitted/received packet format.
+- Sensor classes encapsulating pin config, thresholds and reading logic.
+- Manager class for the fusion layer.
+- Manager will be a finite state machine - something like `idle` (deep sleep) -> `activity_detected` -> `confirming` -> `event_sent` -> `cooldown`.
+
+```
+shared/
+  packet.h
+  lora_config.h     <--- LoRa boilerplate (frequency, bandwith, spreading factor etc)
+
+transmitter/
+  sensors/
+    ReedSwitch.h/.cpp
+    Photoresistor.h/.cpp
+    Ultrasonic.h/.cpp
+  LoRaRadio.h/.cpp
+  EventManager.h/.cpp
+  main.cpp
+
+receiver/
+  LoRaRadio.h/.cpp
+  MQTTClient.h/.cpp
+  main.cpp
+```
+
 ## steps
 1. Start ESP32 project (should I have one repository storing the transmitter and receiver code or one repository for each?)
 2. Validate components:
@@ -83,4 +109,7 @@ envelope/
    - Validate N/C reed switch ✓
    - Validate GL5528 (photoresistor) ✓
    - Validate HC-SR04 (ultrasonic sensor) ✓
-3. ...
+3. Design code architecture
+   - Deep sleep - deep sleep wakeup only monitors voltage levels on digital GPIO lines. it has no ADC, so the reed switch is the only option. i can use the ext1 mode and have 2 reed switches: one on the flap and one on the box.
+   - packet struct?
+   - LoRa ACK - transmitter sends packet, waits ~1s for an ACK and retries up to 3 times if it doesn't get one; if all fail, log the error.
