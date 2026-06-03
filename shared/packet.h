@@ -11,7 +11,6 @@ struct __attribute__((packed)) Packet {
 };
 
 inline void debugPrint(const Packet& p) {
-    Serial.println("Packet sent: ");
     Serial.printf("-> seq_number: %d\n", p.seq_number);
     Serial.printf("-> was_photoresistor_triggered: %s\n", p.was_photoresistor_triggered ? "true" : "false");
     Serial.printf("-> was_movement_detected: %s\n", p.was_movement_detected ? "true" : "false");
@@ -26,7 +25,7 @@ struct __attribute__((packed)) Ack {
 };
 
 inline void debugPrint(const Ack& a) {
-    Serial.println("Packet received: ");
     Serial.printf("-> seq_number: %d\n", a.seq_number);
     Serial.printf("-> success: %s\n", a.success ? "true" : "false");
+    Serial.println();
 }
