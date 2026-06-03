@@ -37,7 +37,7 @@ int LoRaRadio::init() {
 
     if (radio.setSyncWord(LORA_SYNC_WORD) != RADIOLIB_ERR_NONE) {
         Serial.printf("Unable to set sync word: %d\n", LORA_SYNC_WORD);
-        return 1;
+        return -1;
     }
 
     if (radio.setOutputPower(LORA_OUTPUT_POWER) == RADIOLIB_ERR_INVALID_OUTPUT_POWER) {
