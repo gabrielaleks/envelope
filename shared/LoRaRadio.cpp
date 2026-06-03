@@ -1,6 +1,7 @@
 #include "LoRaRadio.h"
 
-LoRaRadio::LoRaRadio() : radio(new Module(PIN_LORA_CS, PIN_LORA_DIO0, PIN_LORA_RST, PIN_LORA_DIO1)) {}
+LoRaRadio::LoRaRadio() : radio(new Module(PIN_LORA_CS, PIN_LORA_DIO0, PIN_LORA_RST, PIN_LORA_DIO1)) {
+}
 
 int LoRaRadio::init() {
     Serial.println("Initializing LoRa...");
@@ -60,19 +61,6 @@ int LoRaRadio::init() {
     }
 
     Serial.println("LoRa initialized! \n");
-
-    return 0;
-}
-
-int LoRaRadio::send(Packet packet) {
-    Serial.println("\n-----");
-    Serial.println("Sending packet");
-
-    radio.transmit((uint8_t *)&packet, sizeof(packet));
-
-    Serial.println("Packet sent: ");
-    Serial.printf("-> seq_number: %d\n", packet.seq_number);
-    Serial.println("-----");
 
     return 0;
 }

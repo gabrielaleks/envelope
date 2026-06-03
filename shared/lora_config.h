@@ -14,3 +14,4 @@ static const int LORA_OUTPUT_POWER = 14;
 static const int LORA_CURRENT_LIMIT = 140;
 static const int LORA_PREAMBLE_LENGTH = 16;
 static const int LORA_RCR = false;
+static const int LORA_RECEIVE_TIMEOUT_MS = 1000;
