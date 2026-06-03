@@ -1,17 +1,18 @@
 #pragma once
 
-#include "packet.h"
-#include <LoRaRadio.h>
 #include <sensors/Photoresistor.h>
 #include <sensors/ReedSwitch.h>
 #include <sensors/Ultrasonic.h>
 
+#include "LoRaRadio.h"
+#include "packet.h"
+
 class Manager {
-  public:
+public:
     Manager();
     void run();
 
-  private:
+private:
     LoRaRadio _lora;
     Photoresistor _photoresistor;
     ReedSwitch _flapSwitch;

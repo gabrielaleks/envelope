@@ -5,11 +5,11 @@
 #include "config.h"
 
 class Photoresistor {
-  public:
+public:
     Photoresistor(int pin);
     int init();
     int getMeasurement();
 
-  private:
+private:
     int _pin;
 };

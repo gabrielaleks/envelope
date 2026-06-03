@@ -5,11 +5,11 @@
 #include "config.h"
 
 class ReedSwitch {
-  public:
+public:
     ReedSwitch(int pin);
     int init();
     bool isMagnetConnected();
 
-  private:
+private:
     int _pin;
 };

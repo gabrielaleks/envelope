@@ -1,6 +1,7 @@
 #include "Ultrasonic.h"
 
-Ultrasonic::Ultrasonic(int triggerPin, int echoPin) : _triggerPin(triggerPin), _echoPin(echoPin) {}
+Ultrasonic::Ultrasonic(int triggerPin, int echoPin) : _triggerPin(triggerPin), _echoPin(echoPin) {
+}
 
 int Ultrasonic::init() {
     Serial.printf("Initializing ultrasonic sensor on pins trigger %d, echo %d...\n", _triggerPin, _echoPin);

@@ -1,6 +1,7 @@
 #include "Photoresistor.h"
 
-Photoresistor::Photoresistor(int pin) : _pin(pin) {}
+Photoresistor::Photoresistor(int pin) : _pin(pin) {
+}
 
 int Photoresistor::init() {
     Serial.printf("Initializing photoresistor on pin %d...\n", _pin);
@@ -23,5 +24,5 @@ int Photoresistor::getMeasurement() {
         sum += analogRead(_pin);
     }
 
-    return sum / PHOTORESISTOR_SAMPLES; // Raw averaged ADC value
+    return sum / PHOTORESISTOR_SAMPLES;  // Raw averaged ADC value
 }

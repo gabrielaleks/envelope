@@ -5,12 +5,12 @@
 #include "config.h"
 
 class Ultrasonic {
-  public:
+public:
     Ultrasonic(int triggerPin, int echoPin);
     int init();
     int getMeasurement();
 
-  private:
+private:
     int _triggerPin;
     int _echoPin;
 };

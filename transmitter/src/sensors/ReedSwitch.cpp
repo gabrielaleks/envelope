@@ -1,6 +1,7 @@
 #include "ReedSwitch.h"
 
-ReedSwitch::ReedSwitch(int pin) : _pin(pin) {}
+ReedSwitch::ReedSwitch(int pin) : _pin(pin) {
+}
 
 int ReedSwitch::init() {
     Serial.printf("Initializing reed switch on pin %d...\n", _pin);
@@ -10,4 +11,6 @@ int ReedSwitch::init() {
     return 0;
 }
 
-bool ReedSwitch::isMagnetConnected() { return digitalRead(_pin) == HIGH; }
+bool ReedSwitch::isMagnetConnected() {
+    return digitalRead(_pin) == HIGH;
+}

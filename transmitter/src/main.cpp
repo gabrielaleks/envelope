@@ -9,4 +9,5 @@ void setup() {
     manager.run();
 }
 
-void loop() {}
+void loop() {
+}
