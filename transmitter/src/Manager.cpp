@@ -31,21 +31,21 @@ void Manager::run() {
         _display.clear();
 
         auto light = _photoresistor.getMeasurement();
-
+        auto distance = _ultrasonic.getMeasurement();
         auto isFlapMagnetOn = _flapSwitch.isMagnetConnected();
         auto isBoxMagnetOn = _boxSwitch.isMagnetConnected();
 
         auto distance = _ultrasonic.getMeasurement();
 
         Packet packet = {
-            .seq_number = seq,
-            .was_flap_opened = !isFlapMagnetOn,
-            .was_box_opened = !isBoxMagnetOn,
-            .light_level = light,
-            .distance_cm = distance,
-            .flap_magnet_present = isFlapMagnetOn,
-            .box_magnet_present = isBoxMagnetOn,
-            .battery_voltage = Battery::getVoltage(),
+            .seqNumber = seq,
+            .wasFlapOpened = result.wasFlapOpened,
+            .wasBoxOpened = result.wasBoxOpened,
+            .lightLevel = light,
+            .distanceCm = distance,
+            .flapMagnetPresent = isFlapMagnetOn,
+            .boxMagnetPresent = isBoxMagnetOn,
+            .batteryVoltage = Battery::getVoltage(),
         };
 
         debugPrint(packet);

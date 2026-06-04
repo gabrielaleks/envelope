@@ -34,14 +34,14 @@ void loop() {
         debugPrint(packet);
 
         Log::displayln("Packet received");
-        Log::displayln("seq_number: %d", packet.seq_number);
-        Log::displayln("flap_opened: %d", packet.was_flap_opened);
-        Log::displayln("box_opened: %d", packet.was_box_opened);
-        Log::displayln("distance: %d cm", packet.distance_cm);
-        Log::displayln("voltage: %.2f V", packet.battery_voltage);
+        Log::displayln("seqNumber: %d", packet.seqNumber);
+        Log::displayln("flap_opened: %d", packet.wasFlapOpened);
+        Log::displayln("box_opened: %d", packet.wasBoxOpened);
+        Log::displayln("distance: %d cm", packet.distanceCm);
+        Log::displayln("voltage: %.2f V", packet.batteryVoltage);
         Log::displayln("RSSI: %d dBm", rssi);
 
-        Ack ack = {.seq_number = packet.seq_number, .success = true};
+        Ack ack = {.seqNumber = packet.seqNumber, .success = true};
         _lora.send(ack);
         Log::displayln("ACK sent");
     }
