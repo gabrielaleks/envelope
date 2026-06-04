@@ -68,7 +68,7 @@ void setup() {
     delay(1000);
 
     ++bootCount;
-    Serial.println("Boot number: " + String(bootCount));
+    Serial.printf("Boot number: %d", bootCount);
 
     pinMode(LED_PIN, OUTPUT);
 

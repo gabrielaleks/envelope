@@ -60,7 +60,7 @@ int LoRaRadio::init() {
         return RADIOLIB_ERR_INVALID_CRC_CONFIGURATION;
     }
 
-    Serial.println("LoRa initialized! \n");
+    Serial.println("LoRa initialized!\n");
 
     return 0;
 }
