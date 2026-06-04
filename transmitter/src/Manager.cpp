@@ -35,7 +35,13 @@ void Manager::run() {
         auto isFlapMagnetOn = _flapSwitch.isMagnetConnected();
         auto isBoxMagnetOn = _boxSwitch.isMagnetConnected();
 
-        auto distance = _ultrasonic.getMeasurement();
+        // Add here logic to decide if flap was opened and/or box was opened
+        auto result = Manager::classifyEvent(
+            light,
+            distance,
+            isFlapMagnetOn,
+            isBoxMagnetOn);
+        // ---
 
         Packet packet = {
             .seqNumber = seq,
@@ -82,4 +88,46 @@ void Manager::run() {
 
         delay(1000);
     }
+}
+
+/**
+ * | Box reed switch | Flap reed switch | Photoresistor | Ultrasonic sensor | Meaning |
+ * |---|---|---|---|---|
+ * | false | false | false | false | nothing |
+ * | false | false | false | true | nothing |
+ * | false | false | true | false | nothing |
+ * | false | false | true | true | flap opened (80%-90%) |
+ * | false | true | false | false | flap opened |
+ * | false | true | false | true | flap opened |
+ * | false | true | true | false | flap opened |
+ * | false | true | true | true | flap opened |
+ * | true | false | false | false | box opened |
+ * | true | false | false | true | box opened |
+ * | true | false | true | false | box opened |
+ * | true | false | true | true | box opened |
+ * | true | true | false | false | box opened |
+ * | true | true | false | true | box opened |
+ * | true | true | true | false | box opened |
+ * | true | true | true | true | box opened |
+ */
+EventResult Manager::classifyEvent(
+    uint16_t light,
+    uint16_t distance,
+    bool isFlapMagnetOn,
+    bool isBoxMagnetOn) {
+    EventResult result;
+
+    if (!isBoxMagnetOn) {
+        return {.wasFlapOpened = false, .wasBoxOpened = true};
+    }
+
+    if (!isFlapMagnetOn) {
+        return {.wasFlapOpened = true, .wasBoxOpened = false};
+    }
+
+    if (light > LIGHT_THRESHOLD && distance < DISTANCE_THRESHOLD) {
+        return {.wasFlapOpened = true, .wasBoxOpened = false};
+    }
+
+    return {.wasFlapOpened = false, .wasBoxOpened = false};
 }
