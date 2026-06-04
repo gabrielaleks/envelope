@@ -25,72 +25,67 @@ void Manager::run() {
 
     int errorCount = 0;
 
-    unsigned long start = millis();
+    esp_task_wdt_reset();
+    _display.clear();
 
-    while (millis() - start < MEASUREMENT_WINDOW_MS) {
-        esp_task_wdt_reset();
-        _display.clear();
+    auto light = _photoresistor.getMeasurement();
+    auto distance = _ultrasonic.getMeasurement();
+    auto isFlapMagnetOn = _flapSwitch.isMagnetConnected();
+    auto isBoxMagnetOn = _boxSwitch.isMagnetConnected();
 
-        auto light = _photoresistor.getMeasurement();
-        auto distance = _ultrasonic.getMeasurement();
-        auto isFlapMagnetOn = _flapSwitch.isMagnetConnected();
-        auto isBoxMagnetOn = _boxSwitch.isMagnetConnected();
+    auto result = Manager::classifyEvent(
+        light,
+        distance,
+        isFlapMagnetOn,
+        isBoxMagnetOn);
 
-        auto result = Manager::classifyEvent(
-            light,
-            distance,
-            isFlapMagnetOn,
-            isBoxMagnetOn);
+    Packet packet = {
+        .seqNumber = seqNumber,
+        .wasFlapOpened = result.wasFlapOpened,
+        .wasBoxOpened = result.wasBoxOpened,
+        .lightLevel = light,
+        .distanceCm = distance,
+        .flapMagnetPresent = isFlapMagnetOn,
+        .boxMagnetPresent = isBoxMagnetOn,
+        .batteryVoltage = Battery::getVoltage(),
+    };
 
-        Packet packet = {
-            .seqNumber = seqNumber,
-            .wasFlapOpened = result.wasFlapOpened,
-            .wasBoxOpened = result.wasBoxOpened,
-            .lightLevel = light,
-            .distanceCm = distance,
-            .flapMagnetPresent = isFlapMagnetOn,
-            .boxMagnetPresent = isBoxMagnetOn,
-            .batteryVoltage = Battery::getVoltage(),
-        };
+    debugPrint(packet);
 
-        debugPrint(packet);
-
-        bool ackReceived = false;
-        for (int attempt = 1; attempt <= LORA_RETRY_QUANTITY && !ackReceived; attempt++) {
-            auto sendState = _lora.send(packet);
-            if (sendState != RADIOLIB_ERR_NONE) {
-                Log::serialln("Send failed: %d", sendState);
-                if (++errorCount > 10) {
-                    _lora.init();
-                    errorCount = 0;
-                }
-                break;
-            }
-
-            Log::displayln("LoRa packet sent");
-
-            Ack ack;
-            auto receiveState = _lora.receive(ack);
-
-            if (receiveState == RADIOLIB_ERR_NONE) {
-                debugPrint(ack);
-                Log::displayln("ACK received");
+    bool ackReceived = false;
+    for (int attempt = 1; attempt <= LORA_RETRY_QUANTITY && !ackReceived; attempt++) {
+        auto sendState = _lora.send(packet);
+        if (sendState != RADIOLIB_ERR_NONE) {
+            Log::serialln("Send failed: %d", sendState);
+            if (++errorCount > 10) {
+                _lora.init();
                 errorCount = 0;
-                ackReceived = true;
-            } else if (receiveState == RADIOLIB_ERR_RX_TIMEOUT) {
-                Log::displayln("No ACK (%d/%d)", attempt, LORA_RETRY_QUANTITY);
-                Log::serialln("No ACK %d/%d", attempt, LORA_RETRY_QUANTITY);
-            } else {
-                if (++errorCount > 10) {
-                    _lora.init();
-                    errorCount = 0;
-                }
-                break;
             }
+            break;
         }
-        seqNumber++;
-        break;
+
+        Log::displayln("LoRa packet sent");
+
+        Ack ack;
+        auto receiveState = _lora.receive(ack);
+
+        if (receiveState == RADIOLIB_ERR_NONE) {
+            debugPrint(ack);
+            Log::displayln("ACK received");
+            errorCount = 0;
+            ackReceived = true;
+        } else if (receiveState == RADIOLIB_ERR_RX_TIMEOUT) {
+            Log::displayln("No ACK (%d/%d)", attempt, LORA_RETRY_QUANTITY);
+            Log::serialln("No ACK %d/%d", attempt, LORA_RETRY_QUANTITY);
+        } else {
+            if (++errorCount > 10) {
+                _lora.init();
+                errorCount = 0;
+            }
+            break;
+        }
     }
+    seqNumber++;
 }
 
 /**

@@ -31,6 +31,3 @@ static const int PIN_ULTRASONIC_TRIGGER = 41;
 static const int PIN_ULTRASONIC_ECHO = 45;
 static const int ULTRASONIC_TIMEOUT_US = 300000;
 static const int DISTANCE_THRESHOLD = 10;
-
-// Running window
-static const int MEASUREMENT_WINDOW_MS = 1000;
