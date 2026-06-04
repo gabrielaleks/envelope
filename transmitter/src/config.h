@@ -19,6 +19,7 @@
 // Reed switches
 static const gpio_num_t PIN_REED_FLAP = GPIO_NUM_16;
 static const gpio_num_t PIN_REED_BOX = GPIO_NUM_15;
+static const uint64_t WAKEUP_MASK = (1ULL << PIN_REED_FLAP) | (1ULL << PIN_REED_BOX);
 
 // Photoresistor
 static const int PIN_PHOTORESISTOR = 12;
@@ -32,4 +33,4 @@ static const int ULTRASONIC_TIMEOUT_US = 300000;
 static const int DISTANCE_THRESHOLD = 10;
 
 // Running window
-static const int MEASUREMENT_WINDOW_MS = 1000000;
+static const int MEASUREMENT_WINDOW_MS = 1000;

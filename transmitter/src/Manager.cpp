@@ -12,6 +12,8 @@ Manager::Manager()
     Log::init(DEBUG);
 }
 
+RTC_DATA_ATTR uint8_t seqNumber = 1;
+
 void Manager::run() {
     _display.init();
     Log::setDisplay(_display);
@@ -25,7 +27,6 @@ void Manager::run() {
 
     unsigned long start = millis();
 
-    uint8_t seq = 1;
     while (millis() - start < MEASUREMENT_WINDOW_MS) {
         esp_task_wdt_reset();
         _display.clear();
@@ -44,7 +45,7 @@ void Manager::run() {
         // ---
 
         Packet packet = {
-            .seqNumber = seq,
+            .seqNumber = seqNumber,
             .wasFlapOpened = result.wasFlapOpened,
             .wasBoxOpened = result.wasBoxOpened,
             .lightLevel = light,
@@ -66,7 +67,7 @@ void Manager::run() {
         } else {
             Log::displayln("LoRa packet sent");
 
-            seq++;
+            seqNumber++;
 
             Ack ack;
             auto receiveState = _lora.receive(ack);
@@ -86,7 +87,7 @@ void Manager::run() {
             }
         }
 
-        delay(1000);
+        break;
     }
 }
 
