@@ -30,6 +30,7 @@ static const int LORA_CURRENT_LIMIT = 140;
 static const int LORA_PREAMBLE_LENGTH = 16;
 static const int LORA_RCR = false;
 static const int LORA_RECEIVE_TIMEOUT_MS = 1000;
+static const int LORA_RETRY_QUANTITY = 3;
 
 // Battery
 static const int PIN_BATTERY_ADC = 1;

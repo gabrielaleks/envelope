@@ -12,8 +12,8 @@
 #include "driver/rtc_io.h"
 
 // Environment
-// #define DEBUG LOG_DISPLAY  // only display
-#define DEBUG LOG_ALL  // full debug
+#define DEBUG LOG_DISPLAY  // only display
+// #define DEBUG LOG_ALL  // full debug
 // #define DEBUG LOG_OFF  // production
 
 // Reed switches

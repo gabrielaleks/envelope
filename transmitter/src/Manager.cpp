@@ -36,13 +36,11 @@ void Manager::run() {
         auto isFlapMagnetOn = _flapSwitch.isMagnetConnected();
         auto isBoxMagnetOn = _boxSwitch.isMagnetConnected();
 
-        // Add here logic to decide if flap was opened and/or box was opened
         auto result = Manager::classifyEvent(
             light,
             distance,
             isFlapMagnetOn,
             isBoxMagnetOn);
-        // ---
 
         Packet packet = {
             .seqNumber = seqNumber,
@@ -57,17 +55,19 @@ void Manager::run() {
 
         debugPrint(packet);
 
-        auto sendState = _lora.send(packet);
-        if (sendState != RADIOLIB_ERR_NONE) {
-            Log::serialln("Send failed: %d", sendState);
-            if (++errorCount > 10) {
-                _lora.init();
-                errorCount = 0;
+        bool ackReceived = false;
+        for (int attempt = 1; attempt <= LORA_RETRY_QUANTITY && !ackReceived; attempt++) {
+            auto sendState = _lora.send(packet);
+            if (sendState != RADIOLIB_ERR_NONE) {
+                Log::serialln("Send failed: %d", sendState);
+                if (++errorCount > 10) {
+                    _lora.init();
+                    errorCount = 0;
+                }
+                break;
             }
-        } else {
-            Log::displayln("LoRa packet sent");
 
-            seqNumber++;
+            Log::displayln("LoRa packet sent");
 
             Ack ack;
             auto receiveState = _lora.receive(ack);
@@ -76,17 +76,19 @@ void Manager::run() {
                 debugPrint(ack);
                 Log::displayln("ACK received");
                 errorCount = 0;
-            } else if (receiveState != RADIOLIB_ERR_RX_TIMEOUT) {
+                ackReceived = true;
+            } else if (receiveState == RADIOLIB_ERR_RX_TIMEOUT) {
+                Log::displayln("No ACK (%d/%d)", attempt, LORA_RETRY_QUANTITY);
+                Log::serialln("No ACK %d/%d", attempt, LORA_RETRY_QUANTITY);
+            } else {
                 if (++errorCount > 10) {
                     _lora.init();
                     errorCount = 0;
                 }
-            } else {
-                Log::displayln("ACK not received");
-                Log::serialln("No ACK received (error: %d)", receiveState);
+                break;
             }
         }
-
+        seqNumber++;
         break;
     }
 }
