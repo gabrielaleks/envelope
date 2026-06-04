@@ -6,17 +6,17 @@ Photoresistor::Photoresistor(int pin, int samples) : _pin(pin), _samples(samples
 }
 
 int Photoresistor::init() {
-    Log::displayln("Initializing photoresistor on pin %d...", _pin);
+    Log::serialln("Initializing photoresistor on pin %d...", _pin);
 
     pinMode(_pin, INPUT);
 
     int val = analogRead(_pin);
     if (val < 20) {
-        Log::displayln("Photoresistor not detected");
+        Log::serialln("Photoresistor not detected");
         return -1;
     }
 
-    Log::displayln("Photoresistor initialized!");
+    Log::serialln("Photoresistor initialized!");
     return 0;
 }
 

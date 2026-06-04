@@ -6,11 +6,11 @@ ReedSwitch::ReedSwitch(int pin) : _pin(pin) {
 }
 
 int ReedSwitch::init() {
-    Log::displayln("Initializing reed switch on pin %d...", _pin);
+    Log::serialln("Initializing reed switch on pin %d...", _pin);
 
     pinMode(_pin, INPUT);
 
-    Log::displayln("Reed switch initialized!");
+    Log::serialln("Reed switch initialized!");
     return 0;
 }
 

@@ -11,12 +11,12 @@ Ultrasonic::Ultrasonic(
 }
 
 int Ultrasonic::init() {
-    Log::displayln("Initializing ultrasonic sensor on pins trigger %d, echo %d...", _triggerPin, _echoPin);
+    Log::serialln("Initializing ultrasonic sensor on pins trigger %d, echo %d...", _triggerPin, _echoPin);
 
     pinMode(_triggerPin, OUTPUT);
     pinMode(_echoPin, INPUT);
 
-    Log::displayln("Ultrasonic sensor initialized!");
+    Log::serialln("Ultrasonic sensor initialized!");
     return 0;
 }
 
