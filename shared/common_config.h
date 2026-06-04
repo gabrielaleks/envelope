@@ -1,3 +1,13 @@
+#pragma once
+
+// Display
+static const int PIN_OLED_SDA = 18;
+static const int PIN_OLED_SCL = 17;
+static const int PIN_OLED_WIDTH = 128;
+static const int PIN_OLED_HEIGHT = 64;
+static const int PIN_OLED_ADDR = 0x3C;
+
+// LoRa
 static const int PIN_LORA_CS = 7;
 static const int PIN_LORA_DIO0 = 9;
 static const int PIN_LORA_DIO1 = 33;
@@ -15,3 +25,6 @@ static const int LORA_CURRENT_LIMIT = 140;
 static const int LORA_PREAMBLE_LENGTH = 16;
 static const int LORA_RCR = false;
 static const int LORA_RECEIVE_TIMEOUT_MS = 1000;
+
+// Battery
+static const int PIN_BATTERY_ADC = 1;
