@@ -15,8 +15,10 @@ void setup() {
     Serial.begin(115200);
     delay(2000);
 
-    _lora.init();
+    Log::init(LOG_ON);
     _display.init();
+    Log::setDisplay(_display);
+    _lora.init();
 }
 
 void loop() {
@@ -30,19 +32,17 @@ void loop() {
         auto rssi = _lora.getRSSI();
 
         debugPrint(packet);
-        Serial.printf("RSSI: %d\n", rssi);
 
-        _display.println("Packet received");
-        _display.println("seq_number: %d", packet.seq_number);
-        _display.println("flap_opened: %d", packet.was_flap_opened);
-        _display.println("box_opened: %d", packet.was_box_opened);
-        _display.println("voltage: %.2f", packet.battery_voltage);
-        _display.println("RSSI: %d dBm", rssi);
-        Serial.println();
+        Log::displayln("Packet received");
+        Log::displayln("seq_number: %d", packet.seq_number);
+        Log::displayln("flap_opened: %d", packet.was_flap_opened);
+        Log::displayln("box_opened: %d", packet.was_box_opened);
+        Log::displayln("distance: %d cm", packet.distance_cm);
+        Log::displayln("voltage: %.2f V", packet.battery_voltage);
+        Log::displayln("RSSI: %d dBm", rssi);
 
         Ack ack = {.seq_number = packet.seq_number, .success = true};
         _lora.send(ack);
-        _display.println("");
-        _display.println("ACK sent");
+        Log::displayln("ACK sent");
     }
 }

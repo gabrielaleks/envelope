@@ -1,15 +1,17 @@
 #include "Ultrasonic.h"
 
+#include "Log.h"
+
 Ultrasonic::Ultrasonic(int triggerPin, int echoPin) : _triggerPin(triggerPin), _echoPin(echoPin) {
 }
 
 int Ultrasonic::init() {
-    Serial.printf("Initializing ultrasonic sensor on pins trigger %d, echo %d...\n", _triggerPin, _echoPin);
+    Log::displayln("Initializing ultrasonic sensor on pins trigger %d, echo %d...", _triggerPin, _echoPin);
 
     pinMode(_triggerPin, OUTPUT);
     pinMode(_echoPin, INPUT);
 
-    Serial.println("Ultrasonic sensor initialized!\n");
+    Log::displayln("Ultrasonic sensor initialized!");
     return 0;
 }
 

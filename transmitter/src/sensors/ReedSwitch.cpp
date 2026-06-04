@@ -1,13 +1,16 @@
 #include "ReedSwitch.h"
 
+#include "Log.h"
+
 ReedSwitch::ReedSwitch(int pin) : _pin(pin) {
 }
 
 int ReedSwitch::init() {
-    Serial.printf("Initializing reed switch on pin %d...\n", _pin);
+    Log::displayln("Initializing reed switch on pin %d...", _pin);
+
     pinMode(_pin, INPUT);
 
-    Serial.println("Reed switch initialized!\n");
+    Log::displayln("Reed switch initialized!");
     return 0;
 }
 

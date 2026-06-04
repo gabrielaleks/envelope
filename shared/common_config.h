@@ -28,3 +28,7 @@ static const int LORA_RECEIVE_TIMEOUT_MS = 1000;
 
 // Battery
 static const int PIN_BATTERY_ADC = 1;
+
+// Log
+static const int LOG_OFF = 0;
+static const int LOG_ON = 1;

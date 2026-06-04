@@ -1,20 +1,22 @@
 #include "Photoresistor.h"
 
+#include "Log.h"
+
 Photoresistor::Photoresistor(int pin) : _pin(pin) {
 }
 
 int Photoresistor::init() {
-    Serial.printf("Initializing photoresistor on pin %d...\n", _pin);
+    Log::displayln("Initializing photoresistor on pin %d...", _pin);
 
     pinMode(_pin, INPUT);
 
     int val = analogRead(_pin);
     if (val < 20) {
-        Serial.println("Photoresistor not detected");
+        Log::displayln("Photoresistor not detected");
         return -1;
     }
 
-    Serial.println("Photoresistor initialized! \n");
+    Log::displayln("Photoresistor initialized!");
     return 0;
 }
 

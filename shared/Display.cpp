@@ -1,18 +1,19 @@
 #include "Display.h"
 
+#include "Log.h"
+
 Display::Display() : _display(PIN_OLED_WIDTH, PIN_OLED_HEIGHT, &Wire, -1) {
 }
 
 int Display::init() {
-    Serial.println("Initializing display...");
-
+    Log::serialln("Initializing display...");
     Wire.begin(PIN_OLED_SDA, PIN_OLED_SCL);
     if (!_display.begin(SSD1306_SWITCHCAPVCC, PIN_OLED_ADDR)) {
-        Serial.println("Failed to initialize display");
+        Log::serialln("Failed to initialize display");
         return -1;
     }
 
-    Serial.println("Display initialized! \n");
+    Log::serialln("Display initialized!\n");
 
     _display.clearDisplay();
     _display.setTextSize(1);

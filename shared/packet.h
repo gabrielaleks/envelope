@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+#include "Log.h"
+
 struct __attribute__((packed)) Packet {
     uint8_t seq_number;
 
@@ -20,16 +22,16 @@ struct __attribute__((packed)) Packet {
 };
 
 inline void debugPrint(const Packet& p) {
-    Serial.println("--- Packet information ---");
-    Serial.printf("-> seq_number: %d\n", p.seq_number);
-    Serial.printf("-> was_flap_opened: %s\n", p.was_flap_opened ? "true" : "false");
-    Serial.printf("-> was_box_opened: %s\n", p.was_box_opened ? "true" : "false");
-    Serial.println("Sensor readings");
-    Serial.printf("-> light_level: %d\n", p.light_level);
-    Serial.printf("-> distance_cm: %d\n", p.distance_cm);
-    Serial.printf("-> flap_magnet_present: %d\n", p.flap_magnet_present);
-    Serial.printf("-> box_magnet_present: %d\n", p.box_magnet_present);
-    Serial.printf("-> battery_voltage: %f\n", p.battery_voltage);
+    Log::serialln("--- Packet information ---");
+    Log::serialln("-> seq_number: %d", p.seq_number);
+    Log::serialln("-> was_flap_opened: %s", p.was_flap_opened ? "true" : "false");
+    Log::serialln("-> was_box_opened: %s", p.was_box_opened ? "true" : "false");
+    Log::serialln("-> light_level: %d", p.light_level);
+    Log::serialln("-> distance: %d cm", p.distance_cm);
+    Log::serialln("-> flap_magnet_present: %d", p.flap_magnet_present);
+    Log::serialln("-> box_magnet_present: %d", p.box_magnet_present);
+    Log::serialln("-> battery_voltage: %.2f V", p.battery_voltage);
+    Log::serialln("");
 }
 
 struct __attribute__((packed)) Ack {
@@ -38,7 +40,8 @@ struct __attribute__((packed)) Ack {
 };
 
 inline void debugPrint(const Ack& a) {
-    Serial.printf("-> seq_number: %d\n", a.seq_number);
-    Serial.printf("-> success: %s\n", a.success ? "true" : "false");
-    Serial.println();
+    Log::serialln("--- Ack information ---");
+    Log::serialln("-> seq_number: %d", a.seq_number);
+    Log::serialln("-> success: %s", a.success ? "true" : "false");
+    Log::serialln("");
 }

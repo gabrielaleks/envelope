@@ -9,10 +9,12 @@ Manager::Manager()
       _boxSwitch(PIN_REED_BOX),
       _ultrasonic(PIN_ULTRASONIC_TRIGGER, PIN_ULTRASONIC_ECHO) {
     analogSetAttenuation(ADC_11db);
+    Log::init(LOG_ON);
 }
 
 void Manager::run() {
     _display.init();
+    Log::setDisplay(_display);
     _lora.init();
     _photoresistor.init();
     _flapSwitch.init();
@@ -35,15 +37,6 @@ void Manager::run() {
 
         auto distance = _ultrasonic.getMeasurement();
 
-        Serial.println();
-        Serial.printf("photoresistor: %d\n", light);
-        Serial.printf("box magnet on: %s\n", isBoxMagnetOn ? "true" : "false");
-        Serial.printf("flap magnet on: %s\n", isFlapMagnetOn ? "true" : "false");
-        Serial.printf("distance: %d\n", distance);
-        Serial.println();
-
-        _display.println("Measurements made");
-
         Packet packet = {
             .seq_number = seq,
             .was_flap_opened = !isFlapMagnetOn,
@@ -59,13 +52,13 @@ void Manager::run() {
 
         auto sendState = _lora.send(packet);
         if (sendState != RADIOLIB_ERR_NONE) {
-            Serial.printf("Send failed: %d\n", sendState);
+            Log::serialln("Send failed: %d", sendState);
             if (++errorCount > 10) {
                 _lora.init();
                 errorCount = 0;
             }
         } else {
-            _display.println("LoRa packet sent");
+            Log::displayln("LoRa packet sent");
 
             seq++;
 
@@ -74,7 +67,7 @@ void Manager::run() {
 
             if (receiveState == RADIOLIB_ERR_NONE) {
                 debugPrint(ack);
-                _display.println("ACK received");
+                Log::displayln("ACK received");
                 errorCount = 0;
             } else if (receiveState != RADIOLIB_ERR_RX_TIMEOUT) {
                 if (++errorCount > 10) {
@@ -82,8 +75,8 @@ void Manager::run() {
                     errorCount = 0;
                 }
             } else {
-                _display.println("ACK not received");
-                Serial.printf("No ACK received (error: %d)\n", receiveState);
+                Log::displayln("ACK not received");
+                Log::serialln("No ACK received (error: %d)", receiveState);
             }
         }
 
