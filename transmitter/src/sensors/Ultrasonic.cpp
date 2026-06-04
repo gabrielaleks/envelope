@@ -13,7 +13,7 @@ int Ultrasonic::init() {
     return 0;
 }
 
-int Ultrasonic::getMeasurement() {
+uint16_t Ultrasonic::getMeasurement() {
     long duration, distanceCm;
 
     digitalWrite(_triggerPin, LOW);

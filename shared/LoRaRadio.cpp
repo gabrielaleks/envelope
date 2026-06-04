@@ -64,3 +64,7 @@ int LoRaRadio::init() {
 
     return 0;
 }
+
+int8_t LoRaRadio::getRSSI() {
+    return (int8_t)radio.getRSSI();
+}

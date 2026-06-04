@@ -8,7 +8,7 @@ class Ultrasonic {
 public:
     Ultrasonic(int triggerPin, int echoPin);
     int init();
-    int getMeasurement();
+    uint16_t getMeasurement();
 
 private:
     int _triggerPin;

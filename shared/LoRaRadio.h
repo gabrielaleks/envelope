@@ -2,13 +2,14 @@
 
 #include <RadioLib.h>
 
-#include "lora_config.h"
+#include "common_config.h"
 #include "packet.h"
 
 class LoRaRadio {
 public:
     LoRaRadio();
     int init();
+    int8_t getRSSI();
 
     template <typename T>
     int send(const T& data) {

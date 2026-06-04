@@ -8,7 +8,7 @@ class Photoresistor {
 public:
     Photoresistor(int pin);
     int init();
-    int getMeasurement();
+    uint16_t getMeasurement();
 
 private:
     int _pin;

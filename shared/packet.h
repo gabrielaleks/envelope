@@ -4,19 +4,32 @@
 
 struct __attribute__((packed)) Packet {
     uint8_t seq_number;
-    bool was_photoresistor_triggered;
-    bool was_movement_detected;
+
+    // event flags
     bool was_flap_opened;
     bool was_box_opened;
+
+    // raw sensor readings
+    uint16_t light_level;  // raw ADC value
+    uint16_t distance_cm;
+    bool flap_magnet_present;
+    bool box_magnet_present;
+
+    // diagnostics
+    float battery_voltage;
 };
 
 inline void debugPrint(const Packet& p) {
+    Serial.println("--- Packet information ---");
     Serial.printf("-> seq_number: %d\n", p.seq_number);
-    Serial.printf("-> was_photoresistor_triggered: %s\n", p.was_photoresistor_triggered ? "true" : "false");
-    Serial.printf("-> was_movement_detected: %s\n", p.was_movement_detected ? "true" : "false");
     Serial.printf("-> was_flap_opened: %s\n", p.was_flap_opened ? "true" : "false");
     Serial.printf("-> was_box_opened: %s\n", p.was_box_opened ? "true" : "false");
-    Serial.println();
+    Serial.println("Sensor readings");
+    Serial.printf("-> light_level: %d\n", p.light_level);
+    Serial.printf("-> distance_cm: %d\n", p.distance_cm);
+    Serial.printf("-> flap_magnet_present: %d\n", p.flap_magnet_present);
+    Serial.printf("-> box_magnet_present: %d\n", p.box_magnet_present);
+    Serial.printf("-> battery_voltage: %f\n", p.battery_voltage);
 }
 
 struct __attribute__((packed)) Ack {

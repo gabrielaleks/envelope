@@ -3,7 +3,7 @@
 #include <Adafruit_SSD1306.h>
 #include <Wire.h>
 
-#include "display_config.h"
+#include "common_config.h"
 
 class Display {
 public:

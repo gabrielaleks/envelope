@@ -18,7 +18,7 @@ int Photoresistor::init() {
     return 0;
 }
 
-int Photoresistor::getMeasurement() {
+uint16_t Photoresistor::getMeasurement() {
     long sum = 0;
     for (int i = 0; i < PHOTORESISTOR_SAMPLES; i++) {
         sum += analogRead(_pin);
