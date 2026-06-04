@@ -2,7 +2,12 @@
 
 #include "Log.h"
 
-Ultrasonic::Ultrasonic(int triggerPin, int echoPin) : _triggerPin(triggerPin), _echoPin(echoPin) {
+Ultrasonic::Ultrasonic(
+    int triggerPin,
+    int echoPin,
+    uint32_t timeoutUs) : _triggerPin(triggerPin),
+                          _echoPin(echoPin),
+                          _timeoutUs(timeoutUs) {
 }
 
 int Ultrasonic::init() {
@@ -24,7 +29,7 @@ uint16_t Ultrasonic::getMeasurement() {
     delayMicroseconds(10);
     digitalWrite(_triggerPin, LOW);
 
-    duration = pulseIn(_echoPin, HIGH, ULTRASONIC_TIMEOUT_US);
+    duration = pulseIn(_echoPin, HIGH, _timeoutUs);
 
     // no echo received
     if (duration == 0) {

@@ -2,7 +2,7 @@
 
 #include "Log.h"
 
-Photoresistor::Photoresistor(int pin) : _pin(pin) {
+Photoresistor::Photoresistor(int pin, int samples) : _pin(pin), _samples(samples) {
 }
 
 int Photoresistor::init() {
@@ -22,9 +22,9 @@ int Photoresistor::init() {
 
 uint16_t Photoresistor::getMeasurement() {
     long sum = 0;
-    for (int i = 0; i < PHOTORESISTOR_SAMPLES; i++) {
+    for (int i = 0; i < _samples; i++) {
         sum += analogRead(_pin);
     }
 
-    return sum / PHOTORESISTOR_SAMPLES;  // Raw averaged ADC value
+    return sum / _samples;  // Raw averaged ADC value
 }

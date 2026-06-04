@@ -4,10 +4,10 @@
 #include "esp_task_wdt.h"
 
 Manager::Manager()
-    : _photoresistor(PIN_PHOTORESISTOR),
+    : _photoresistor(PIN_PHOTORESISTOR, PHOTORESISTOR_SAMPLES),
       _flapSwitch(PIN_REED_FLAP),
       _boxSwitch(PIN_REED_BOX),
-      _ultrasonic(PIN_ULTRASONIC_TRIGGER, PIN_ULTRASONIC_ECHO) {
+      _ultrasonic(PIN_ULTRASONIC_TRIGGER, PIN_ULTRASONIC_ECHO, ULTRASONIC_TIMEOUT_US) {
     analogSetAttenuation(ADC_11db);
     Log::init(LOG_ON);
 }

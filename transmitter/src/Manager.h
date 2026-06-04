@@ -1,8 +1,8 @@
 #pragma once
 
-#include <sensors/Photoresistor.h>
-#include <sensors/ReedSwitch.h>
-#include <sensors/Ultrasonic.h>
+#include <Photoresistor.h>
+#include <ReedSwitch.h>
+#include <Ultrasonic.h>
 
 #include "Display.h"
 #include "LoRaRadio.h"

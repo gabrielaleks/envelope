@@ -4,13 +4,13 @@
 
 #include "config.h"
 
-class Ultrasonic {
+class Photoresistor {
 public:
-    Ultrasonic(int triggerPin, int echoPin);
+    Photoresistor(int pin, int samples = 32);
     int init();
     uint16_t getMeasurement();
 
 private:
-    int _triggerPin;
-    int _echoPin;
+    int _pin;
+    int _samples;
 };
