@@ -9,7 +9,7 @@ Manager::Manager()
       _boxSwitch(PIN_REED_BOX),
       _ultrasonic(PIN_ULTRASONIC_TRIGGER, PIN_ULTRASONIC_ECHO, ULTRASONIC_TIMEOUT_US) {
     analogSetAttenuation(ADC_11db);
-    Log::init(LOG_ON);
+    Log::init(DEBUG);
 }
 
 void Manager::run() {

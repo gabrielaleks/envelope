@@ -11,6 +11,11 @@
 
 #include "driver/rtc_io.h"
 
+// Environment
+// #define DEBUG LOG_DISPLAY  // only display
+#define DEBUG LOG_ALL  // full debug
+// #define DEBUG LOG_OFF  // production
+
 // Reed switches
 static const gpio_num_t PIN_REED_FLAP = GPIO_NUM_16;
 static const gpio_num_t PIN_REED_BOX = GPIO_NUM_15;

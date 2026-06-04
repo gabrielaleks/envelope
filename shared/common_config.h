@@ -1,5 +1,10 @@
 #pragma once
 
+// Log
+#define LOG_OFF 0      // 0b00
+#define LOG_DISPLAY 1  // 0b01
+#define LOG_ALL 2      // 0b10
+
 // Display
 static const int PIN_OLED_SDA = 18;
 static const int PIN_OLED_SCL = 17;
@@ -28,7 +33,3 @@ static const int LORA_RECEIVE_TIMEOUT_MS = 1000;
 
 // Battery
 static const int PIN_BATTERY_ADC = 1;
-
-// Log
-static const int LOG_OFF = 0;
-static const int LOG_ON = 1;

@@ -12,7 +12,7 @@ void Log::setDisplay(Display& display) {
 }
 
 void Log::serial(const char* format, ...) {
-    if (_level == 0)
+    if (_level < LOG_ALL)
         return;
 
     char buffer[128];
@@ -25,7 +25,7 @@ void Log::serial(const char* format, ...) {
 }
 
 void Log::serialln(const char* format, ...) {
-    if (_level == 0)
+    if (_level < LOG_ALL)
         return;
 
     char buffer[128];
@@ -38,7 +38,7 @@ void Log::serialln(const char* format, ...) {
 }
 
 void Log::display(const char* format, ...) {
-    if (_level == 0)
+    if (_level < LOG_DISPLAY)
         return;
 
     if (_display == nullptr) {
@@ -56,7 +56,7 @@ void Log::display(const char* format, ...) {
 }
 
 void Log::displayln(const char* format, ...) {
-    if (_level == 0)
+    if (_level < LOG_DISPLAY)
         return;
 
     if (_display == nullptr) {
