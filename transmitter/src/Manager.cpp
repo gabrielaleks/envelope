@@ -1,5 +1,6 @@
 #include "Manager.h"
 
+#include "Battery.h"
 #include "esp_task_wdt.h"
 
 Manager::Manager()
@@ -45,15 +46,18 @@ void Manager::run() {
 
         Packet packet = {
             .seq_number = seq,
-            .was_photoresistor_triggered = light > 500 ? true : false,
-            .was_movement_detected = distance < 10 ? true : false,
             .was_flap_opened = !isFlapMagnetOn,
             .was_box_opened = !isBoxMagnetOn,
+            .light_level = light,
+            .distance_cm = distance,
+            .flap_magnet_present = isFlapMagnetOn,
+            .box_magnet_present = isBoxMagnetOn,
+            .battery_voltage = Battery::getVoltage(),
         };
 
         debugPrint(packet);
 
-        int sendState = _lora.send(packet);
+        auto sendState = _lora.send(packet);
         if (sendState != RADIOLIB_ERR_NONE) {
             Serial.printf("Send failed: %d\n", sendState);
             if (++errorCount > 10) {
@@ -66,7 +70,7 @@ void Manager::run() {
             seq++;
 
             Ack ack;
-            int receiveState = _lora.receive(ack);
+            auto receiveState = _lora.receive(ack);
 
             if (receiveState == RADIOLIB_ERR_NONE) {
                 debugPrint(ack);

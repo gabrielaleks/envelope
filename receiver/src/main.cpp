@@ -23,16 +23,26 @@ void loop() {
     esp_task_wdt_reset();
 
     Packet packet;
-    int state = _lora.receive(packet, 5000);
+    auto state = _lora.receive(packet, 5000);
 
     if (state == RADIOLIB_ERR_NONE) {
         _display.clear();
-        Serial.println("Packet received:");
+        auto rssi = _lora.getRSSI();
+
         debugPrint(packet);
+        Serial.printf("RSSI: %d\n", rssi);
+
         _display.println("Packet received");
+        _display.println("seq_number: %d", packet.seq_number);
+        _display.println("flap_opened: %d", packet.was_flap_opened);
+        _display.println("box_opened: %d", packet.was_box_opened);
+        _display.println("voltage: %.2f", packet.battery_voltage);
+        _display.println("RSSI: %d dBm", rssi);
+        Serial.println();
 
         Ack ack = {.seq_number = packet.seq_number, .success = true};
         _lora.send(ack);
+        _display.println("");
         _display.println("ACK sent");
     }
 }
