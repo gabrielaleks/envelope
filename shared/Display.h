@@ -12,7 +12,6 @@ public:
     void print(const char* format, ...);
     void println(const char* format, ...);
     void clear();
-    void br();
 
 private:
     Adafruit_SSD1306 _display;

@@ -31,11 +31,6 @@ void Display::clear() {
     _display.display();
 }
 
-void Display::br() {
-    _display.println();
-    _display.display();
-}
-
 void Display::print(const char* format, ...) {
     char buffer[128];
     va_list args;
