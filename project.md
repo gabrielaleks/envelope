@@ -42,20 +42,51 @@ For a flap that rests closed and briefly opens:
 ### cases
 Each sensor acts independently and, based on its readings, will determine true/false for the event of a letter insertion. I also want to determine when the box has been opened with a key. The combinations + interpretations are the following:
 
-| N/C reed switch | GL5528 photoresistor | HC-SR04 ultrasonic sensor | Meaning |
-|---|---|---|---|
-| false | false | false | Nothing was inserted (100%) |
-| false | false | true | Only movement inside the box = faulty HC-SR04 |
-| false | true | false | Only light detected = faulty GL5528 |
-| false | true | true | Light + movement but no reed switch = reed switch is faulty, letter was added (80%-90%) |
-| true | false | false | Only reed switch = flap tapped, nothing was inserted |
-| true | false | true | Flap was opened, movement inside and no light = letter was added and GL5528 is faulty |
-| true | true | false | Flap was opened (100%) + No movement in the box (100%)...   IF very bright -> box was opened IF not as bright -> flap was opened but nothing was inserted |
-| true | true | true | Flap was opened (100%) + Movement in the box (100%) = Letter was added (100%) |
+**With explanation**
+
+| Box reed switch | Flap reed switch | Photoresistor | Ultrasonic sensor | Meaning |
+|---|---|---|---|---|
+| false | false | false | false | Nothing was inserted (100%) |
+| false | false | false | true | Only movement inside the box = faulty ultrasonic |
+| false | false | true | false | Only light detected = faulty photoresistor |
+| false | false | true | true | Light + movement but no reed switch = reed switch is faulty, letter was added (80%-90%) |
+| false | true | false | false | Only flap switch = flap tapped, nothing was inserted |
+| false | true | false | true | Flap was opened, movement inside and no light = letter was added and GL5528 is faulty |
+| false | true | true | false | Flap was opened + No movement in the box = IF very bright -> box was opened IF not as bright -> flap was opened but nothing was inserted |
+| false | true | true | true | Flap was opened + Movement in the box + light detected = Letter was added (100%) |
+| true | false | false | false | Only box switch = faulty box switch |
+| true | false | false | true | box switch + movement in the box = box opened, faulty photoresistor |
+| true | false | true | false | box switch + light = box opened (100%) |
+| true | false | true | true | box switch + light + movement in the box = box opened (100%) |
+| true | true | false | false | box switch + flap switch = box opened, faulty photoresistor |
+| true | true | false | true | box switch + flap switch + movement in the box = box opened, faulty photoresistor |
+| true | true | true | false | box switch + flap switch + light = box opened only |
+| true | true | true | true | box switch + flap switch + light + movement in the box = box opened + something added/removed |
+
+**Summarized**
+
+| Box reed switch | Flap reed switch | Photoresistor | Ultrasonic sensor | Meaning |
+|---|---|---|---|---|
+| false | false | false | false | nothing |
+| false | false | false | true | nothing |
+| false | false | true | false | nothing |
+| false | false | true | true | flap opened (80%-90%) |
+| false | true | false | false | flap opened |
+| false | true | false | true | flap opened |
+| false | true | true | false | flap opened |
+| false | true | true | true | flap opened |
+| true | false | false | false | box opened |
+| true | false | false | true | box opened |
+| true | false | true | false | box opened |
+| true | false | true | true | box opened |
+| true | true | false | false | box opened |
+| true | true | false | true | box opened |
+| true | true | true | false | box opened |
+| true | true | true | true | box opened |
 
 Notes:
 - `true` from a N/C reed switch is reliable. It means the magnet was physically there and then left (flap opened).
-- row `true | true | false` could rely on duration instead of brightness. Box opened sustains high light for more seconds.
+- row `false | true | true | false` could rely on duration instead of brightness. Box opened sustains high light for more seconds.
 
 ### structure
 - P2P LoRa: the LilyGo boards talk directly to each other with no infrastructure in between.
