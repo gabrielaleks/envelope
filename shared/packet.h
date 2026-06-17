@@ -4,7 +4,10 @@
 
 #include "Log.h"
 
+#define PACKET_MAGIC 0xAB12
+
 struct __attribute__((packed)) Packet {
+    uint16_t magic;  // magic word used to avoid RF noise
     uint8_t seqNumber;
 
     // event flags

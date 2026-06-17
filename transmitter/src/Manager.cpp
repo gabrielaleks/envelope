@@ -40,6 +40,7 @@ void Manager::run() {
         isBoxMagnetOn);
 
     Packet packet = {
+        .magic = PACKET_MAGIC,
         .seqNumber = seqNumber,
         .wasFlapOpened = result.wasFlapOpened,
         .wasBoxOpened = result.wasBoxOpened,

@@ -39,7 +39,7 @@ void loop() {
     Packet packet;
     auto state = _lora.receive(packet, 5000);
 
-    if (state == RADIOLIB_ERR_NONE) {
+    if (state == RADIOLIB_ERR_NONE && packet.magic == PACKET_MAGIC) {
         _display.clear();
         auto rssi = _lora.getRSSI();
 
