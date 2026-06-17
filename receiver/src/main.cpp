@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <MQTTClient.h>
 #include <WifiManager.h>
 
 #include "Display.h"
@@ -9,6 +10,7 @@
 LoRaRadio _lora;
 Display _display;
 WifiManager _wifiManager;
+MQTTClient _mqttClient;
 
 void setup() {
     esp_task_wdt_init(30, true);  // reset if hung for 30s
@@ -25,10 +27,14 @@ void setup() {
 
     _wifiManager.connect();
     _wifiManager.syncTime();
+
+    _mqttClient.connect();
 }
 
 void loop() {
     esp_task_wdt_reset();
+
+    _mqttClient.loop();
 
     Packet packet;
     auto state = _lora.receive(packet, 5000);
@@ -51,8 +57,6 @@ void loop() {
         _lora.send(ack);
         Log::displayln("ACK sent");
 
-        // publish data to envelope/event topic
-
-        // ---
+        _mqttClient.publish(packet, rssi, _wifiManager.getTime());
     }
 }
