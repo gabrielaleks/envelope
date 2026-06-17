@@ -51,7 +51,6 @@ void loop() {
         Log::displayln("box_opened: %d", packet.wasBoxOpened);
         Log::displayln("distance: %d cm", packet.distanceCm);
         Log::displayln("voltage: %.2f V", packet.batteryVoltage);
-        Log::displayln("RSSI: %d dBm", rssi);
 
         Ack ack = {.seqNumber = packet.seqNumber, .success = true};
         _lora.send(ack);

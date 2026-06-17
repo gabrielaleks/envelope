@@ -25,7 +25,7 @@ struct __attribute__((packed)) Packet {
 };
 
 inline void debugPrint(const Packet& p) {
-    Log::serialln("--- Packet information ---");
+    Log::serialln("\n--- Packet information ---");
     Log::serialln("-> seqNumber: %d", p.seqNumber);
     Log::serialln("-> wasFlapOpened: %s", p.wasFlapOpened ? "true" : "false");
     Log::serialln("-> wasBoxOpened: %s", p.wasBoxOpened ? "true" : "false");

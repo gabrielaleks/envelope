@@ -33,6 +33,7 @@ void MQTTClient::loop() {
 
         while (!_queue.empty() && _client.connected()) {
             _client.publish(MQTT_EVENT_TOPIC, _queue.front().c_str());
+            Log::serialln("Published queued message");
             _queue.pop();
         }
     }
@@ -50,8 +51,14 @@ void MQTTClient::publish(const Packet& packet, int rssi, const std::string& time
     auto payload = serialize(packet, rssi, timestamp);
 
     if (WiFi.status() == WL_CONNECTED && _client.connected()) {
-        _client.publish(MQTT_EVENT_TOPIC, payload.c_str());
+        if (_client.publish(MQTT_EVENT_TOPIC, payload.c_str())) {
+            Log::serialln("MQTT message published");
+        } else {
+            Log::serialln("MQTT publish failed (buffer full?), queuing");
+            _queue.push(payload);
+        }
     } else {
+        Log::serialln("Broker offline, queuing message");
         _queue.push(payload);
     }
 }
