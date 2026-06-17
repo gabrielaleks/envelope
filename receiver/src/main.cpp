@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <WifiManager.h>
 
 #include "Display.h"
 #include "LoRaRadio.h"
@@ -7,6 +8,7 @@
 
 LoRaRadio _lora;
 Display _display;
+WifiManager _wifiManager;
 
 void setup() {
     esp_task_wdt_init(30, true);  // reset if hung for 30s
@@ -15,10 +17,14 @@ void setup() {
     Serial.begin(115200);
     delay(2000);
 
-    Log::init(LOG_ON);
+    Log::init(LOG_ALL);
     _display.init();
     Log::setDisplay(_display);
+
     _lora.init();
+
+    _wifiManager.connect();
+    _wifiManager.syncTime();
 }
 
 void loop() {
@@ -44,5 +50,9 @@ void loop() {
         Ack ack = {.seqNumber = packet.seqNumber, .success = true};
         _lora.send(ack);
         Log::displayln("ACK sent");
+
+        // publish data to envelope/event topic
+
+        // ---
     }
 }

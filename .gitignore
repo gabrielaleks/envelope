@@ -10,4 +10,7 @@ passwd
 **/.vscode/launch.json
 **/.vscode/ipch
 
+# Secrets
+secrets.h
+
 lilygo-docs
