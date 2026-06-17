@@ -23,15 +23,14 @@ int WifiManager::connect() {
     }
 
     Log::serialln("\nConnected to WiFi!");
-    Log::serialln("ESP32 IP: %s", WiFi.localIP().toString().c_str());
+    Log::serialln("ESP32 IP: %s\n", WiFi.localIP().toString().c_str());
 
     return 0;
 }
 
 void WifiManager::syncTime() {
     configTzTime(TIMEZONE, NTP_SERVER);
-    Log::serialln("%s", getTime().c_str());
-    Log::displayln("%s", getTime().c_str());
+    Log::serialln("Start time: %s\n", getTime().c_str());
 }
 
 std::string WifiManager::getTime() {
