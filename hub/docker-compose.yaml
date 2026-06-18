@@ -9,3 +9,14 @@ services:
       - ./mosquitto/config:/mosquitto/config
       - ./mosquitto/log:/mosquitto/log
       - ./mosquitto/data:/mosquitto/data
+  app:
+    build:
+      context: .
+      dockerfile: ./app/Dockerfile
+    container_name: envelope-app
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./app:/app
+      - /app/node_modules
+      - ./db:/db

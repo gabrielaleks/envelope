@@ -1,12 +1,16 @@
 # Hub
-## Setup
+## App
+Workflow should be: init DB -> connect to MQTT -> on message: parse + insert -> Express serves the table.
+
+## Mosquitto
+### Setup
 Before starting the container for the first time, a password has to be generated. Run this command:
 
 ```sh
 docker run --rm -it -v $(pwd)/mosquitto/config:/mosquitto/config eclipse-mosquitto:2 mosquitto_passwd -c /mosquitto/config/passwd envelope
 ```
 
-## Running the app
+### Running the app
 Run `docker compose up` to start the docker services.
 
 We can test that the Mosquitto broker is working using the mosquitto package

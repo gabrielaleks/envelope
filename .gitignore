@@ -13,4 +13,9 @@ passwd
 # Secrets
 secrets.h
 
+# Hub
+node_modules/
+.env
+db/
+
 lilygo-docs
