@@ -105,7 +105,23 @@ mqttClient.on('message', (topic, message) => {
 	)
 
 	console.log(`Added event with seqNumber ${payload.seqNumber} to db`)
+
+	const newEvent = {
+		seq_number: payload.seqNumber,
+		was_flap_opened: payload.wasFlapOpened ? 1 : 0,
+		was_box_opened: payload.wasBoxOpened ? 1 : 0,
+		distance_cm: payload.distanceCm,
+		battery_voltage: payload.batteryVoltage,
+		rssi: payload.rssi,
+		timestamp: payload.timestamp,
+	}
+
+	for (const client of sseClients) {
+		client.write(`data: ${JSON.stringify(newEvent)}\n\n`)
+	}
 })
+
+const sseClients = new Set()
 
 const app = express()
 
@@ -114,27 +130,24 @@ app.get('/', (req, res) => {
 	res.send(renderPage(events))
 })
 
+app.get('/events', (req, res) => {
+	res.setHeader('Content-Type', 'text/event-stream')
+	res.setHeader('Cache-Control', 'no-cache')
+	res.setHeader('Connection', 'keep-alive')
+	res.flushHeaders()
+
+	sseClients.add(res)
+	req.on('close', () => sseClients.delete(res))
+})
+
 app.listen(3000, () => console.log('Listening on http://localhost:3000'))
 
 function renderPage(events) {
 	const rows = events
-		.map((e) => {
-			const date = new Date(e.timestamp)
-			const formattedDate = date
-				.toLocaleString('en-GB', {
-					timeZone: 'Europe/Zurich',
-					day: '2-digit',
-					month: '2-digit',
-					year: 'numeric',
-					hour: '2-digit',
-					minute: '2-digit',
-					second: '2-digit',
-					hour12: false,
-				})
-				.replace(', ', ' - ')
-			return `
+		.map(
+			(e) => `
         <tr>
-          <td>${formattedDate}</td>
+          <td data-timestamp="${e.timestamp}"></td>
           <td>${e.was_flap_opened ? 'Yes' : 'No'}</td>
           <td>${e.was_box_opened ? 'Yes' : 'No'}</td>
           <td>${e.distance_cm} cm</td>
@@ -142,8 +155,8 @@ function renderPage(events) {
           <td>${e.rssi} dBm</td>
           <td>${e.seq_number}</td>
         </tr>
-      `
-		})
+      `,
+		)
 		.join('')
 
 	return `<!DOCTYPE html>
@@ -175,6 +188,36 @@ function renderPage(events) {
 			</tbody>
 		</table>
 	</main>
+<script>
+	function formatDate(timestamp) {
+		return new Date(timestamp).toLocaleString('en-GB', {
+			timeZone: 'Europe/Zurich',
+			day: '2-digit', month: '2-digit', year: 'numeric',
+			hour: '2-digit', minute: '2-digit', second: '2-digit',
+			hour12: false,
+		}).replace(', ', ' - ')
+	}
+
+	document.querySelectorAll('[data-timestamp]').forEach(td => {
+		td.textContent = formatDate(td.dataset.timestamp)
+	})
+
+	const source = new EventSource('/events')
+	source.onmessage = (event) => {
+		const e = JSON.parse(event.data)
+		const row = document.createElement('tr')
+		row.innerHTML = \`
+			<td>\${formatDate(e.timestamp)}</td>
+			<td>\${e.was_flap_opened ? 'Yes' : 'No'}</td>
+			<td>\${e.was_box_opened ? 'Yes' : 'No'}</td>
+			<td>\${e.distance_cm} cm</td>
+			<td>\${e.battery_voltage.toFixed(2)} V</td>
+			<td>\${e.rssi} dBm</td>
+			<td>\${e.seq_number}</td>
+		\`
+		document.querySelector('tbody').prepend(row)
+	}
+</script>
 </body>
 </html>`
 }
