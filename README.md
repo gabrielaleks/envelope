@@ -1,5 +1,5 @@
 # envelope
-👀
+Distributed embedded telemetry system with sensor fusion and fault classification over LoRa + MQTT pipeline.
 
 Basic configuration for `receiver` and `transmitter`:
 
