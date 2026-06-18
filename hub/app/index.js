@@ -60,8 +60,6 @@ const eventTopic = 'envelope/event'
 mqttClient.subscribe(eventTopic)
 
 mqttClient.on('message', (topic, message) => {
-	// console.log(`message: ${message}, topic: ${topic}`)
-
 	/** @type {Payload} */
 	const payload = JSON.parse(message.toString())
 
@@ -110,7 +108,10 @@ mqttClient.on('message', (topic, message) => {
 		seq_number: payload.seqNumber,
 		was_flap_opened: payload.wasFlapOpened ? 1 : 0,
 		was_box_opened: payload.wasBoxOpened ? 1 : 0,
+		light_level: payload.lightLevel,
 		distance_cm: payload.distanceCm,
+		flap_magnet_present: payload.flapMagnetPresent ? 1 : 0,
+		box_magnet_present: payload.boxMagnetPresent ? 1 : 0,
 		battery_voltage: payload.batteryVoltage,
 		rssi: payload.rssi,
 		timestamp: payload.timestamp,
@@ -142,22 +143,32 @@ app.get('/events', (req, res) => {
 
 app.listen(3000, () => console.log('Listening on http://localhost:3000'))
 
+function renderRow(e) {
+	return `
+		<tr>
+			<td data-timestamp="${e.timestamp}"></td>
+			<td>${e.was_flap_opened ? 'Yes' : 'No'}</td>
+			<td>${e.was_box_opened ? 'Yes' : 'No'}</td>
+			<td><button class="outline secondary" style="padding: 2px 8px; margin: 0;" onclick="toggleDetails(this)">+</button></td>
+		</tr>
+		<tr hidden>
+			<td colspan="4">
+				<small>
+					Seq #: ${e.seq_number} &nbsp;·&nbsp;
+					Light level: ${e.light_level} &nbsp;·&nbsp;
+					Distance: ${e.distance_cm} cm &nbsp;·&nbsp;
+					Flap magnet moved: ${e.flap_magnet_present ? 'No' : 'Yes'} &nbsp;·&nbsp;
+					Box magnet moved: ${e.box_magnet_present ? 'No' : 'Yes'} &nbsp;·&nbsp;
+					Battery: ${e.battery_voltage.toFixed(2)} V &nbsp;·&nbsp;
+					RSSI: ${e.rssi} dBm
+				</small>
+			</td>
+		</tr>
+	`
+}
+
 function renderPage(events) {
-	const rows = events
-		.map(
-			(e) => `
-        <tr>
-          <td data-timestamp="${e.timestamp}"></td>
-          <td>${e.was_flap_opened ? 'Yes' : 'No'}</td>
-          <td>${e.was_box_opened ? 'Yes' : 'No'}</td>
-          <td>${e.distance_cm} cm</td>
-          <td>${e.battery_voltage.toFixed(2)} V</td>
-          <td>${e.rssi} dBm</td>
-          <td>${e.seq_number}</td>
-        </tr>
-      `,
-		)
-		.join('')
+	const rows = events.map(renderRow).join('')
 
 	return `<!DOCTYPE html>
 <html lang="en">
@@ -165,22 +176,19 @@ function renderPage(events) {
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Envelope</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text y='32' font-size='32'>📨</text></svg>">
+	<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text y='32' font-size='32'>📨</text></svg>">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
 </head>
 <body>
 	<main class="container">
-		<h1>Mailbox Events</h1>
+		<h1 style="text-align: center;">Mailbox Events</h1>
 		<table>
 			<thead>
 				<tr>
 					<th>Timestamp</th>
 					<th>Flap opened</th>
 					<th>Box opened</th>
-					<th>Distance</th>
-					<th>Battery</th>
-					<th>RSSI</th>
-					<th>Seq #</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -198,6 +206,12 @@ function renderPage(events) {
 		}).replace(', ', ' - ')
 	}
 
+	function toggleDetails(btn) {
+		const detailRow = btn.closest('tr').nextElementSibling
+		detailRow.hidden = !detailRow.hidden
+		btn.textContent = detailRow.hidden ? '+' : '−'
+	}
+
 	document.querySelectorAll('[data-timestamp]').forEach(td => {
 		td.textContent = formatDate(td.dataset.timestamp)
 	})
@@ -205,17 +219,27 @@ function renderPage(events) {
 	const source = new EventSource('/events')
 	source.onmessage = (event) => {
 		const e = JSON.parse(event.data)
-		const row = document.createElement('tr')
-		row.innerHTML = \`
-			<td>\${formatDate(e.timestamp)}</td>
-			<td>\${e.was_flap_opened ? 'Yes' : 'No'}</td>
-			<td>\${e.was_box_opened ? 'Yes' : 'No'}</td>
-			<td>\${e.distance_cm} cm</td>
-			<td>\${e.battery_voltage.toFixed(2)} V</td>
-			<td>\${e.rssi} dBm</td>
-			<td>\${e.seq_number}</td>
-		\`
-		document.querySelector('tbody').prepend(row)
+		document.querySelector('tbody').insertAdjacentHTML('afterbegin', \`
+			<tr>
+				<td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#2ecc71;margin-right:6px;"></span>\${formatDate(e.timestamp)}</td>
+				<td>\${e.was_flap_opened ? 'Yes' : 'No'}</td>
+				<td>\${e.was_box_opened ? 'Yes' : 'No'}</td>
+				<td><button class="outline secondary" style="padding: 2px 8px; margin: 0;" onclick="toggleDetails(this)">+</button></td>
+			</tr>
+			<tr hidden>
+				<td colspan="4">
+					<small>
+						Seq #: \${e.seq_number} &nbsp;·&nbsp;
+						Light level: \${e.light_level} &nbsp;·&nbsp;
+						Distance: \${e.distance_cm} cm &nbsp;·&nbsp;
+						Flap magnet moved: \${e.flap_magnet_present ? 'No' : 'Yes'} &nbsp;·&nbsp;
+						Box magnet moved: \${e.box_magnet_present ? 'No' : 'Yes'} &nbsp;·&nbsp;
+						Battery: \${e.battery_voltage.toFixed(2)} V &nbsp;·&nbsp;
+						RSSI: \${e.rssi} dBm
+					</small>
+				</td>
+			</tr>
+		\`)
 	}
 </script>
 </body>
