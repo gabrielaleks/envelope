@@ -106,6 +106,52 @@ envelope/
 └── transmitter/    # PlatformIO
 ```
 
+### MQTT
+Mosquitto is the MQTT broker sitting in the middle. The receiver is an MQTT client that publishes to `envelope/event` and the hub will have an event handler that is another MQTT client that subscribes to that topic.
+
+Design decisions:
+- Receiver side:
+  - The receiver is always connected to wifi
+  - If the broker is unreachable (during a homelab reboot or network blip for example), the receiver must queue the event in-memory
+  - The receiver must use JSON as the payload format - this is easier to consume on the hub side and easier to debug
+- Topic structure: The topic will be `envelope/event` for now - more topics can be added later if needed
+- Hub side:
+  - The hub app subscribes to the topic, parses the payload, writes to SQLite and serves the webpage
+  - The hub app will live in its own container
+  - The QoS level will be QoS 1 (at least once)
+  - The receiver needs the MQTT broker's IP address to establish a connection. When testing, I'll be using my computer's IP address and in production, my homelab's (RPI) IP address. To achieve IP stability, I have to make sure that I configure DHCP reservation for both devices so their IPs don't change.
+  - Healthcheck:
+    - Receiver: Since the receiver is always connected to Wifi/MQTT, I can use MQTT's built in last will testament (LWT). For that, I configure a "will" message when connecting (`envelope/status/receiver` -> `offline`) that mosquitto publishes automatically if the receiver disconnects unexpectedly. The receiver also publishes `online` on connect. The UI just reads this topic.
+    - Transmitter: it can't be pinged since it's in deepsleep. I can add a periodic heartbeat wakeup with `esp_sleep_enable_timer_wakeup()` alongside the existing reed switch wakeup. The transmitter wakes up every 30 minutes, sends a small "i'm alive" packet to the receiver and goes back to sleep. The receiver forwards this to `envelope/status/transmitter` with a timestamp and the UI shows "last seen X minutes ago". 
+
+**Payload schema**:
+
+```json
+{
+  "seqNumber": 1,
+  "wasFlapOpened": true,
+  "wasBoxOpened": true,
+  "lightLevel": 30,
+  "distanceCm": 13,
+  "flapMagnetPresent": true,
+  "boxMagnetPresent": true,
+  "batteryVoltage": 4.2,
+  "rssi": -87,
+  "timestamp": "2026-06-17T10:25:00Z" // ISO 8601
+}
+```
+
+**Logic in main.cpp**:
+- Setup:
+  - connect to wifi
+  - sync NTP time
+  - connect to mqtt broker
+- Loop:
+  - check for incoming lora packet
+  - if incoming packet: build payload, attempt publish / queue if broker is down
+  - maintain connections - wifi and mqtt can drop independently
+  - drain the queue when connectivity is restored
+
 #### code architecture
 - Shared struct with no methods for the transmitted/received packet format.
 - Sensor classes encapsulating pin config, thresholds and reading logic.
