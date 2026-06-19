@@ -197,6 +197,9 @@ receiver/
    - Validate GL5528 (photoresistor) ✓
    - Validate HC-SR04 (ultrasonic sensor) ✓
 3. Design code architecture
-   - Deep sleep - deep sleep wakeup only monitors voltage levels on digital GPIO lines. it has no ADC, so the reed switch is the only option. i can use the ext1 mode and have 2 reed switches: one on the flap and one on the box.
-   - packet struct?
-   - LoRa ACK - transmitter sends packet, waits ~1s for an ACK and retries up to 3 times if it doesn't get one; if all fail, log the error.
+   - Deep sleep - deep sleep wakeup only monitors voltage levels on digital GPIO lines. it has no ADC, so the reed switch is the only option. i can use the ext1 mode and have 2 reed switches: one on the flap and one on the box - done ✓
+   - packet struct - defined ✓
+   - LoRa ACK - transmitter sends packet, waits ~1s for an ACK and retries up to 3 times if it doesn't get one; if all fail, log the error - done ✓
+4. Implement receiver + transmitter ✓
+5. Investigate and implement MQTT logic on receiver's side ✓
+6. Implement UI ✓
