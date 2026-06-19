@@ -152,11 +152,21 @@ Design decisions:
   - maintain connections - wifi and mqtt can drop independently
   - drain the queue when connectivity is restored
 
+**Interfaces**:
+- WiFi:
+  - connect() - connect to wifi
+  - syncTime() - ntp sync, called once after connect
+  - getTimestamp() - returns the current iso 8601 string
+  - isConnected() - needed so MQTTClient knows whether to recconnect with broker
+- MQTTClient:
+  - connect() - connect to broker
+  - publish() - publishes to topic
+  - loop() - called every iteration of main.cpp's loop, drains the queue when connection is restored and maintains the broker connection
+
 #### code architecture
 - Shared struct with no methods for the transmitted/received packet format.
 - Sensor classes encapsulating pin config, thresholds and reading logic.
-- Manager class for the fusion layer.
-- Manager will be a finite state machine - something like `idle` (deep sleep) -> `activity_detected` -> `confirming` -> `event_sent` -> `cooldown`.
+- Manager class to handle operations on the transmitter.
 
 ```
 shared/
